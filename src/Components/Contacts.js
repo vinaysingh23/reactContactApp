@@ -1,36 +1,33 @@
 import React, { Component } from 'react';
-import AllContacts from './AllContacts';
+import SingleContacts from './SingleContact';
 
-class Contacts extends Component {
-	deleteContact(id){
-		this.props.onDelete(id); 
+function Contacts(props) {
+	function deleteContact(id){
+		props.onDelete(id); 
 	}
 
 
-	editContact(id){
-		this.props.onEdit(id);
+	function editContact(id){
+		props.onEdit(id);
 	}
 
 
-	render() {
-		let contactDetails;
-		if(this.props.contacts){
-			contactDetails = this.props.contacts.map(contact => {
-				return (
-					<AllContacts onDelete={this.deleteContact.bind(this)} onEdit={this.editContact.bind(this)} key={contact.mobileNo} contact={contact}/>
-				);
+	
+	let contactDetails;
+	if(props.contacts){
+		contactDetails = props.contacts.map(contact => (
+			<SingleContacts onDelete={() => deleteContact(contact.id)} onEdit={() => editContact(contact.id)} key={contact.mobileNo} contact={contact}/>
+		));
 
-			});
-
-		}
-		console.log(this.props.contacts);
-		return (
-			<div>
-				<h3>Latest Contacts</h3>
-				{contactDetails}
-			</div>
-		);
 	}
+
+	return (
+		<div>
+			<h3>Latest Contacts</h3>
+			{contactDetails}
+		</div>
+	);
+	
 }
 
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import uuid from 'uuid';
 import Contacts from './Components/Contacts';
 import AddContact from './Components/AddContact';
-import EditContact from './Components/EditContact';
+
 
 class App extends Component {
 	constructor(){
@@ -19,7 +19,7 @@ class App extends Component {
 				}
 			],
 			editContact: false,
-			contactForEdit: ''
+			contactForEdit: {}
   
 		};
 	}
@@ -53,21 +53,21 @@ class App extends Component {
 		const index = contacts.findIndex(x => x.id === contact.id);
 		contacts.splice(index, 1);
 		contacts.push(contact);
-		this.setState({contacts: contacts, editContact: false});
+		this.setState({contacts: contacts, editContact: false, contactForEdit: ''});
 	}
 
 
 	render() {
 		const edit = this.state.editContact;
-		const contactId = this.state.contactId;
+		//console.log(this.state.contactForEdit);
 		return(
 			<div className="App">
-        		My App
+				My App
 				<hr/>
 				{edit ? (
-					<EditContact editContact={this.handleEditContact.bind(this)} contact={this.state.contactForEdit}  />
+					<AddContact editContact={this.handleEditContact.bind(this)} contact={this.state.contactForEdit}  />
 				) : (
-					<AddContact addContact={this.handleAddContact.bind(this)} />
+					<AddContact addContact={this.handleAddContact.bind(this)}  contact={this.state.contactForEdit} />
 				)}
 				<Contacts contacts={this.state.contacts} onDelete={this.handleDeleteContact.bind(this)} onEdit={this.handleOnEdit.bind(this)} />
 			</div>
