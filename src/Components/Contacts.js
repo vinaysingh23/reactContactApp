@@ -1,25 +1,16 @@
 import React, { Component } from 'react';
 import SingleContacts from './SingleContact';
+import {connect} from 'react-redux';
+import {addContact, deleteContact, editContact, onEdit} from '../Actions/index'
 
 function Contacts(props) {
-	function deleteContact(id){
-		props.onDelete(id); 
-	}
-
-
-	function editContact(id){
-		props.onEdit(id);
-	}
-
-
-	
 	let contactDetails;
 	if(props.contacts){
 		contactDetails = props.contacts.map(contact => (
-			<SingleContacts onDelete={() => deleteContact(contact.id)} onEdit={() => editContact(contact.id)} key={contact.mobileNo} contact={contact}/>
+			<SingleContacts onDelete={() => props.onDeleteClick(contact.id)} onEdit={() => props.onEditClick(contact.id)} key={contact.mobileNo} contact={contact}/>
 		));
-
 	}
+
 
 	return (
 		<div>
@@ -31,4 +22,29 @@ function Contacts(props) {
 }
 
 
-export default Contacts;
+const mapStateToProps = (state) => {
+	return {
+		contacts: state.contacts.contacts
+	}
+}
+
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		onDeleteClick: (id) => {
+			dispatch(deleteContact(id))
+		},
+		onEditClick: (id) => {
+			dispatch(onEdit(id))
+		}
+	}
+}
+
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Contacts);
+
+
+

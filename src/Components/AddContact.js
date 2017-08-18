@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import uuid from 'uuid';
 import SexForm from './SexForm';
 import InputComponent from './InputComponent';
+import {addContact, deleteContact, editContact} from '../Actions/index'
+import {connect} from 'react-redux';
 
 class AddContacts extends Component {
 	constructor(props){
 		super(props);
-		
+
 		this.state = {
 			email: '',
 			firstName: '',
@@ -21,17 +23,17 @@ class AddContacts extends Component {
 
 	componentWillReceiveProps(nextProps){
 		this.setState({
-			email: nextProps.contact.email,
-			firstName: nextProps.contact.firstName,
-			lastName: nextProps.contact.lastName,
-			mobileNo: nextProps.contact.mobileNo,
-			sex: nextProps.contact.sex,
-			contactId: nextProps.contact.id 
+			email: nextProps.contacts.email,
+			firstName: nextProps.contacts.firstName,
+			lastName: nextProps.contacts.lastName,
+			mobileNo: nextProps.contacts.mobileNo,
+			sex: nextProps.contacts.sex,
+			contactId: nextProps.contacts.id
 		});
 
 	}
+	
 
-	//console.log(this.props.contact);
 	handleInput(event){
 		const value =  event.target.value;
 		const name = event.target.name;
@@ -61,6 +63,7 @@ class AddContacts extends Component {
 
 
 	handleSubmit(e){
+		console.log("hufidh");
 		if(this.state.firstname === '' || this.state.lastName === '' || this.state.email === '' || this.state.mobileNo === ''){
 			alert('Some field missing!!');
 		}else{
@@ -77,13 +80,12 @@ class AddContacts extends Component {
 				newContact.sex     = this.state.sex,
 				newContact.email   = this.state.email;
 			
-
 				if(this.state.contactId){
+					console.log("jdsih");
 					this.props.editContact(newContact);
 				}else{
 					this.props.addContact(newContact);
 				}
-			
 			}
 		}
 		e.preventDefault();
@@ -91,9 +93,14 @@ class AddContacts extends Component {
 
 
 	render() {
+		const edit=this.state.contactId;
 		return (
 			<div className="form_input">
-				<h3>Edit Contacts</h3>
+			{edit ? (
+					<h3>Edit Contact</h3>
+				) : (
+					<h3>Add Contact </h3>
+				)}
 				<form onSubmit={this.handleSubmit.bind(this)}>
 					<div>
 						<InputComponent  value={this.state.firstName}  onChange={this.handleInput.bind(this)}  lable='firstName' />
@@ -111,4 +118,30 @@ class AddContacts extends Component {
 }
 
 
-export default AddContacts;
+const mapStateToProps = (state) => {
+	const id= state.editContactId.editId;
+	const contacts = state.contacts.contacts;
+	const index = contacts.findIndex(x => x.id === id);
+	const newContact = contacts[index];
+	return {
+		contacts: newContact,
+	}
+}
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		addContact: (contact) => {
+			dispatch(addContact(contact))
+		},
+		editContact: (contact) => {
+			dispatch(editContact(contact))
+		}
+	}
+}
+
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(AddContacts);
+
