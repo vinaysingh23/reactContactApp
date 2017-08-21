@@ -6,13 +6,18 @@ import registerServiceWorker from './registerServiceWorker';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux'
 import allReducers from './Reducers'
+import { BrowserRouter } from 'react-router-dom'
+import createHistory from 'history/createBrowserHistory'
+const history = createHistory()
 
 const store = createStore(allReducers);
 
 
 ReactDOM.render(
 	<Provider store={store}>
+	<BrowserRouter history ={history}>
 		<App />
+	</BrowserRouter>
 	</Provider>,
 	document.getElementById('root')
  );

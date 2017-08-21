@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../contacts.css';
+
 function SingleContact(props){
 	function deleteContact(id){
 		props.onDelete(id);

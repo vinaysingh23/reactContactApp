@@ -4,11 +4,12 @@ import SexForm from './SexForm';
 import InputComponent from './InputComponent';
 import {addContact, deleteContact, editContact} from '../Actions/index'
 import {connect} from 'react-redux';
+import { withRouter } from 'react-router-dom'
 
 class AddContacts extends Component {
 	constructor(props){
 		super(props);
-
+        console.log(this.props.contacts);
 		this.state = {
 			email: '',
 			firstName: '',
@@ -22,14 +23,17 @@ class AddContacts extends Component {
 
 
 	componentWillReceiveProps(nextProps){
-		this.setState({
-			email: nextProps.contacts.email,
-			firstName: nextProps.contacts.firstName,
-			lastName: nextProps.contacts.lastName,
-			mobileNo: nextProps.contacts.mobileNo,
-			sex: nextProps.contacts.sex,
-			contactId: nextProps.contacts.id
-		});
+		console.log(nextProps.contacts);
+  		if(nextProps !== this.props){
+			this.setState({
+				email: nextProps.contacts.email,
+				firstName: nextProps.contacts.firstName,
+				lastName: nextProps.contacts.lastName,
+				mobileNo: nextProps.contacts.mobileNo,
+				sex: nextProps.contacts.sex,
+				contactId: nextProps.contacts.id
+			});
+		}
 
 	}
 	
@@ -63,7 +67,6 @@ class AddContacts extends Component {
 
 
 	handleSubmit(e){
-		console.log("hufidh");
 		if(this.state.firstname === '' || this.state.lastName === '' || this.state.email === '' || this.state.mobileNo === ''){
 			alert('Some field missing!!');
 		}else{
@@ -81,7 +84,6 @@ class AddContacts extends Component {
 				newContact.email   = this.state.email;
 			
 				if(this.state.contactId){
-					console.log("jdsih");
 					this.props.editContact(newContact);
 				}else{
 					this.props.addContact(newContact);
@@ -93,6 +95,8 @@ class AddContacts extends Component {
 
 
 	render() {
+		console.log('hujdi');
+		console.log(this.props.contacts);
 		const edit=this.state.contactId;
 		return (
 			<div className="form_input">
@@ -119,10 +123,12 @@ class AddContacts extends Component {
 
 
 const mapStateToProps = (state) => {
+	console.log(state);
 	const id= state.editContactId.editId;
 	const contacts = state.contacts.contacts;
 	const index = contacts.findIndex(x => x.id === id);
 	const newContact = contacts[index];
+	console.log(newContact);
 	return {
 		contacts: newContact,
 	}
@@ -140,8 +146,8 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 
-export default connect(
+export default withRouter(connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(AddContacts);
+)(AddContacts));
 

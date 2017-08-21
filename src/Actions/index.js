@@ -20,6 +20,7 @@ export const editContact = contact => {
 };
 
 export const onEdit = id => {
+	//console.log("ujih");
 	return {
 		type: 'ON_EDIT',
 		id

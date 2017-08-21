@@ -2,20 +2,18 @@ import React, { Component } from 'react';
 import uuid from 'uuid';
 import Contacts from './Components/Contacts';
 import AddContact from './Components/AddContact';
-import {connect} from 'react-redux';
-import {addContact, deleteContact, editContact} from './Actions/index'
+import Header from './Components/Header'
+import Main from './Components/Main'
 
 class App extends Component {
-
-	render() {
-	
+	render() {	
 		return(
 			<div className="App">
 				My App
 				<hr/>		
-				<AddContact  />
+				<Header  />
 				
-				<Contacts />
+				<Main />
 			</div>
 		);
 	}
