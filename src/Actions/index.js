@@ -5,12 +5,14 @@ export const addContact = contact => {
 	};
 };
 
+
 export const deleteContact = id => {
 	return {
 		type: 'DELETE_CONTACT',
 		id
 	};
 };
+
 
 export const editContact = contact => {
 	return {
@@ -19,8 +21,8 @@ export const editContact = contact => {
 	};
 };
 
+
 export const onEdit = id => {
-	//console.log("ujih");
 	return {
 		type: 'ON_EDIT',
 		id

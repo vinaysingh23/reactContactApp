@@ -20,6 +20,7 @@ const initialState = {
 	]
 };
 
+
 export default function(state = initialState, action){
 	switch(action.type){
 	case 'DELETE_CONTACT':
@@ -30,6 +31,7 @@ export default function(state = initialState, action){
 		
 		
 	case 'ADD_CONTACT':
+		action.contact.id=uuid.v4();
 		return {
 			...state,
 			contacts: [ ...state.contacts, action.contact]

@@ -16,7 +16,7 @@ const store = createStore(allReducers);
 ReactDOM.render(
 	<Provider store={store}>
 	<BrowserRouter history ={history}>
-		<App />
+		<App history={history}/>
 	</BrowserRouter>
 	</Provider>,
 	document.getElementById('root')

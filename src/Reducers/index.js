@@ -4,7 +4,6 @@ import EditContactId from './EditContactId'
 
 
 const allReducers = combineReducers({
-	//contacts: ContactsReducer,
 	contacts: Contacts,
 	editContactId: EditContactId
 

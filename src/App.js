@@ -5,18 +5,16 @@ import AddContact from './Components/AddContact';
 import Header from './Components/Header'
 import Main from './Components/Main'
 
-class App extends Component {
-	render() {	
-		return(
-			<div className="App">
-				My App
-				<hr/>		
-				<Header  />
-				
-				<Main />
-			</div>
-		);
-	}
+function App(props) {
+	return(
+		<div className="App">
+			My App
+			<hr/>		
+			<Header  />
+			
+			<Main />
+		</div>
+	);	
 }
 
 

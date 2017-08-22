@@ -2,41 +2,32 @@ import React, { Component } from 'react';
 import uuid from 'uuid';
 import SexForm from './SexForm';
 import InputComponent from './InputComponent';
+import ValidateInput from './ValidateInput';
 import {addContact, deleteContact, editContact} from '../Actions/index'
 import {connect} from 'react-redux';
-import { withRouter } from 'react-router-dom'
+import { withRouter, Redirect } from 'react-router-dom'
 
 class AddContacts extends Component {
 	constructor(props){
 		super(props);
-        console.log(this.props.contacts);
-		this.state = {
+		const empty = {
 			email: '',
 			firstName: '',
 			lastName: '',
 			mobileNo: '',
 			sex: 'male',
-			contactId: ''
+			id: '',
+			error: ''
 		};
+
+		this.state = this.props.contacts || empty;
 		
+		if ( this.props.location.pathname === "/AddContact" ) {
+			this.state = empty;
+		}	
 	}
 
 
-	componentWillReceiveProps(nextProps){
-		console.log(nextProps.contacts);
-  		if(nextProps !== this.props){
-			this.setState({
-				email: nextProps.contacts.email,
-				firstName: nextProps.contacts.firstName,
-				lastName: nextProps.contacts.lastName,
-				mobileNo: nextProps.contacts.mobileNo,
-				sex: nextProps.contacts.sex,
-				contactId: nextProps.contacts.id
-			});
-		}
-
-	}
-	
 
 	handleInput(event){
 		const value =  event.target.value;
@@ -53,58 +44,65 @@ class AddContacts extends Component {
 	}
 
 
-	validateEmail(email){
-		const re = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
-		return re.test(email);
-	}
+	validate() {
+		var errors = '';
 
-
-	validatePhoneNo(mobileNo){
-		const len = this.state.mobileNo.length === 10;
-		const re = /^[1-9]+[0-9]*$/;
-		return (len && re.test(mobileNo));
+		if(this.state.firstname === '' || this.state.lastName === '' || this.state.email === '' || this.state.mobileNo === ''){
+			errors = 'some field missing!!!!'
+		}else {
+			const reg1 = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
+			const len = this.state.mobileNo.length === 10;
+			const reg2 = /^[1-9]+[0-9]*$/;
+			if(!reg1.test(this.state.email)){
+				errors = 'invalide Email!!!!'	
+			}
+			else if(!(len && reg2.test(this.state.mobileNo))){
+				errors = 'invalide mobile Number!!!!'
+			}
+		}
+		
+		return errors;
 	}
 
 
 	handleSubmit(e){
-		if(this.state.firstname === '' || this.state.lastName === '' || this.state.email === '' || this.state.mobileNo === ''){
-			alert('Some field missing!!');
+		const errors = this.validate();
+		if(errors){
+			this.setState({error : errors});
 		}else{
-			if (!this.validateEmail(this.state.email)) {
-				alert('email is not valid');
-			}else if(!(this.validatePhoneNo(this.state.mobileNo))){
-				alert('mobileNo is not valid');
+			this.setState({error : ''});
+			if(this.state.id){
+				this.props.editContact(this.state, this.props.history);
+
 			}else{
-				let newContact = {};
-				newContact.id = this.state.contactId ? this.state.contactId : uuid.v4(),
-				newContact.firstName = this.state.firstName,
-				newContact.lastName = this.state.lastName,
-				newContact.mobileNo = this.state.mobileNo,
-				newContact.sex     = this.state.sex,
-				newContact.email   = this.state.email;
-			
-				if(this.state.contactId){
-					this.props.editContact(newContact);
-				}else{
-					this.props.addContact(newContact);
-				}
+				this.props.addContact(this.state, this.props.history);
+				//<Redirect to='/' from={this.props.location.pathname} />
 			}
 		}
+
 		e.preventDefault();
 	}
 
 
 	render() {
-		console.log('hujdi');
-		console.log(this.props.contacts);
-		const edit=this.state.contactId;
+		const edit=this.state.id;
+
 		return (
 			<div className="form_input">
+
 			{edit ? (
 					<h3>Edit Contact</h3>
 				) : (
 					<h3>Add Contact </h3>
 				)}
+
+			{this.state.error ? (
+				<li>{this.state.error}</li>
+				) : (
+					<h3>{''}</h3>
+				) 
+			}
+				
 				<form onSubmit={this.handleSubmit.bind(this)}>
 					<div>
 						<InputComponent  value={this.state.firstName}  onChange={this.handleInput.bind(this)}  lable='firstName' />
@@ -122,25 +120,32 @@ class AddContacts extends Component {
 }
 
 
-const mapStateToProps = (state) => {
-	console.log(state);
-	const id= state.editContactId.editId;
-	const contacts = state.contacts.contacts;
-	const index = contacts.findIndex(x => x.id === id);
-	const newContact = contacts[index];
-	console.log(newContact);
-	return {
-		contacts: newContact,
+const mapStateToProps = (state, ownProps) => {
+	//console.log(state);
+	//console.log(ownProps.location.state.id);
+	//const id= state.editContactId.editId;
+	if(ownProps.location.state){
+		const id = ownProps.location.state.id;
+		const contacts = state.contacts.contacts;
+		const index = contacts.findIndex(x => x.id === id);
+		const newContact = contacts[index];
+		return {
+			contacts: newContact,
+		}
+	}else{
+		return {
+			contacts: {},
+		}
 	}
 }
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		addContact: (contact) => {
-			dispatch(addContact(contact))
+		addContact: (contact, history) => {
+			dispatch(addContact(contact));			
 		},
-		editContact: (contact) => {
-			dispatch(editContact(contact))
+		editContact: (contact, history) => {
+			dispatch(editContact(contact));
 		}
 	}
 }

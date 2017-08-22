@@ -5,45 +5,22 @@ import {addContact, deleteContact, editContact, onEdit} from '../Actions/index'
 import { Redirect } from 'react-router';
 import { withRouter } from 'react-router-dom'
 
-class Contacts extends Component {
-	constructor(props){
-		super(props);
-
-		this.state = {
-			redirect: false
-		};
-		
+const Contacts = (props) =>  {
+	console.log(props);
+	let contactDetails;
+	if(props.contacts){
+		contactDetails = props.contacts.map(contact => (
+			<SingleContacts onDelete={() => props.onDeleteClick(contact.id)} onEdit={() => props.onEditClick(contact.id, props.history)} key={contact.mobileNo} contact={contact}/>
+		));
 	}
 
 
-	handleOnEdit(id){
-		console.log(id);
-		this.props.onEditClick(id);	
-		//this.setState({redirect: true});
-		//this.props.history.push("/EditContact");
-	}
-
-	render(){
-		/*if (this.state.redirect) {
-			return <Redirect push to="/EditContact" />;
-		}
-*/
-		let contactDetails;
-		if(this.props.contacts){
-			contactDetails = this.props.contacts.map(contact => (
-				<SingleContacts onDelete={() => this.props.onDeleteClick(contact.id)} onEdit={() => this.props.onEditClick(contact.id)} key={contact.mobileNo} contact={contact}/>
-			));
-		}
-
-
-		return (
-			<div>
-				<h3>Latest Contacts</h3>
-				{contactDetails}
-			</div>
-		);
-
-	}
+	return (
+		<div>
+			<h3>Latest Contacts</h3>
+			{contactDetails}
+		</div>
+	);	
 }
 
 
@@ -60,8 +37,10 @@ const mapDispatchToProps = (dispatch) => {
 		onDeleteClick: (id) => {
 			dispatch(deleteContact(id))
 		},
-		onEditClick: (id) => {
-			dispatch(onEdit(id))
+		onEditClick: (id, history) => {
+			//dispatch(onEdit(id));
+			history.push({ pathname: '/EditContact',
+  			state: { id: id} })
 		}
 	}
 }
