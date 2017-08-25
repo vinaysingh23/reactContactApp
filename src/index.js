@@ -3,22 +3,29 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux'
+import { createStore, applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
 import allReducers from './Reducers'
 import { BrowserRouter } from 'react-router-dom'
 import createHistory from 'history/createBrowserHistory'
 const history = createHistory()
 
-const store = createStore(allReducers);
+const store = createStore(
+	allReducers,
+	composeWithDevTools(
+		applyMiddleware(thunk)
+	)
+);
 
 
 ReactDOM.render(
-	<Provider store={store}>
-	<BrowserRouter history ={history}>
-		<App history={history}/>
-	</BrowserRouter>
-	</Provider>,
-	document.getElementById('root')
- );
+  <BrowserRouter>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </BrowserRouter>,
+  document.getElementById('root')
+);
 registerServiceWorker();

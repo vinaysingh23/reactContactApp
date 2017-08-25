@@ -1,12 +1,11 @@
-import { combineReducers } from 'redux'
-import Contacts from './Contacts'
-import EditContactId from './EditContactId'
+import { combineReducers } from 'redux';
+import Contacts from './Contacts';
+import EditContact from './EditContact';
 
 
 const allReducers = combineReducers({
-	contacts: Contacts,
-	editContactId: EditContactId
+	contacts: Contacts
 
-})
+});
 
 export default allReducers;

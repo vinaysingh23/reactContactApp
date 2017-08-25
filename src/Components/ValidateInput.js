@@ -16,21 +16,21 @@ const ValidateInput = (props) => {
 
 	console.log(props);
 	if(props.firstname === '' || props.lastName === '' || props.email === '' || props.mobileNo === ''){
-			console.log('Some field missing!!');
-		}else{
-			if (!validateEmail(props.email)) {
-				alert('email is not valid');
-			}else if(!(this.validatePhoneNo(props.mobileNo))){
-				alert('mobileNo is not valid');
-			}
+		console.log('Some field missing!!');
+	}else{
+		if (!validateEmail(props.email)) {
+			alert('email is not valid');
+		}else if(!(this.validatePhoneNo(props.mobileNo))){
+			alert('mobileNo is not valid');
 		}
+	}
 
 	return (
 		<div>
 			<h3>error</h3>
 		</div>
 	);	
-}
+};
 
 
 export default ValidateInput;

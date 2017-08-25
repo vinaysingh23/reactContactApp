@@ -1,52 +1,24 @@
-import uuid from 'uuid';
-const initialState = {
-	contacts:[
-		{
-			id: uuid.v4(),
-			firstName: 'Vinayr',
-			lastName: 'Singh',
-			mobileNo: '7739060909',
-			sex     : 'male',
-			email   : 'vinaysingh@gmail.com'
-		},
-		{
-			id: uuid.v4(),
-			firstName: 'rahul',
-			lastName: 'Singh',
-			mobileNo: '7739060989',
-			sex     : 'male',
-			email   : 'vinaysingh@gmail.com'
-		}
-	]
-};
 
-
-export default function(state = initialState, action){
-	switch(action.type){
-	case 'DELETE_CONTACT':
-		const index = state.contacts.findIndex((x) => x.id === action.id);
-		return {
-			contacts: [...state.contacts.slice(0, index), ...state.contacts.slice(index + 1)]
-		};
-		
-		
+export default function(state = [], action ) {
+	switch(action.type) {
 	case 'ADD_CONTACT':
-		action.contact.id=uuid.v4();
-		return {
+		return [
 			...state,
-			contacts: [ ...state.contacts, action.contact]
-		};
-	
+			action.contact
+		];
+
+	case 'DELETE_CONTACT':
+		return state.filter(item => item._id !== action.id);
 
 	case 'EDIT_CONTACT':
-		const i = state.contacts.findIndex(x => x.id === action.contact.id);
-		return {
-			contacts: [
-				...state.contacts.slice(0, i),
-				action.contact,
-				...state.contacts.slice(i + 1)
-			]	 
-		};
+		return state.map(item => {
+			if (item._id === action.contact._id) return action.contact;
+			return item;
+		});
+
+	case 'SET_CONTACTS':
+		return action.contacts;
+
+	default: return state;
 	}
-	return state;
 }
