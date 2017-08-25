@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-function GenaralForm(props) {
+function InputComponent(props) {
 	const lable = props.lable;  
 	return (
 		<div>
@@ -12,4 +12,4 @@ function GenaralForm(props) {
 }
 
 
-export default GenaralForm;
+export default InputComponent;

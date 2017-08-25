@@ -2,36 +2,32 @@ import React, { Component } from 'react';
 import uuid from 'uuid';
 import SexForm from './SexForm';
 import InputComponent from './InputComponent';
+import ValidateInput from './ValidateInput';
+import {addContact, deleteContact, editContact, updateContact, addSingleContact} from '../Actions/index';
+import {connect} from 'react-redux';
+import { withRouter, Redirect } from 'react-router-dom';
 
 class AddContacts extends Component {
 	constructor(props){
 		super(props);
-		
-		this.state = {
+		const empty = {
 			email: '',
 			firstName: '',
 			lastName: '',
 			mobileNo: '',
 			sex: 'male',
-			contactId: ''
+			_id: '',
+			error: ''
 		};
+                           
+		this.state = this.props.contacts || empty;
 		
+		if ( this.props.location.pathname === '/AddContact' ) {
+			this.state = empty;
+		}	
 	}
 
 
-	componentWillReceiveProps(nextProps){
-		this.setState({
-			email: nextProps.contact.email,
-			firstName: nextProps.contact.firstName,
-			lastName: nextProps.contact.lastName,
-			mobileNo: nextProps.contact.mobileNo,
-			sex: nextProps.contact.sex,
-			contactId: nextProps.contact.id 
-		});
-
-	}
-
-	//console.log(this.props.contact);
 	handleInput(event){
 		const value =  event.target.value;
 		const name = event.target.name;
@@ -47,53 +43,65 @@ class AddContacts extends Component {
 	}
 
 
-	validateEmail(email){
-		const re = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
-		return re.test(email);
-	}
+	validate() {
+		var errors = '';
 
-
-	validatePhoneNo(mobileNo){
-		const len = this.state.mobileNo.length === 10;
-		const re = /^[1-9]+[0-9]*$/;
-		return (len && re.test(mobileNo));
+		if(this.state.firstname === '' || this.state.lastName === '' || this.state.email === '' || this.state.mobileNo === ''){
+			errors = 'some field missing!!!!';
+		}else {
+			const reg1 = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
+			const len = this.state.mobileNo.length === 10;
+			const reg2 = /^[1-9]+[0-9]*$/;
+			if(!reg1.test(this.state.email)){
+				errors = 'invalide Email!!!!';	
+			}
+			else if(!(len && reg2.test(this.state.mobileNo))){
+				errors = 'invalide mobile Number!!!!';
+			}
+		}
+		
+		return errors;
 	}
 
 
 	handleSubmit(e){
-		if(this.state.firstname === '' || this.state.lastName === '' || this.state.email === '' || this.state.mobileNo === ''){
-			alert('Some field missing!!');
+		const errors = this.validate();
+		if(errors){
+			this.setState({error : errors});
 		}else{
-			if (!this.validateEmail(this.state.email)) {
-				alert('email is not valid');
-			}else if(!(this.validatePhoneNo(this.state.mobileNo))){
-				alert('mobileNo is not valid');
-			}else{
-				let newContact = {};
-				newContact.id = this.state.contactId ? this.state.contactId : uuid.v4(),
-				newContact.firstName = this.state.firstName,
-				newContact.lastName = this.state.lastName,
-				newContact.mobileNo = this.state.mobileNo,
-				newContact.sex     = this.state.sex,
-				newContact.email   = this.state.email;
-			
+			this.setState({error : ''});
+			if(this.state._id){
+				this.props.updateContact(this.state);
 
-				if(this.state.contactId){
-					this.props.editContact(newContact);
-				}else{
-					this.props.addContact(newContact);
-				}
-			
+			}else{
+				this.props.addSingleContact(this.state);
+				//<Redirect to='/' from={this.props.location.pathname} />
 			}
 		}
+
 		e.preventDefault();
 	}
 
 
 	render() {
+		const edit=this.state._id;
+
 		return (
 			<div className="form_input">
-				<h3>Edit Contacts</h3>
+
+				{edit ? (
+					<h3>Edit Contact</h3>
+				) : (
+					<h3>Add Contact </h3>
+				)}
+
+				{this.state.error ? (
+					<li>{this.state.error}</li>
+				) : (
+					<h3>{''}</h3>
+				) 
+				}
+				
 				<form onSubmit={this.handleSubmit.bind(this)}>
 					<div>
 						<InputComponent  value={this.state.firstName}  onChange={this.handleInput.bind(this)}  lable='firstName' />
@@ -111,4 +119,28 @@ class AddContacts extends Component {
 }
 
 
-export default AddContacts;
+const mapStateToProps = (state, ownProps) => {
+	//console.log(state);
+	//console.log(ownProps.location.state._id);
+	//const id= state.editContactId.editId;
+	if(ownProps.location.state){
+		const _id = ownProps.location.state._id;
+		const contacts = state.contacts;
+		const index = contacts.findIndex(x => x._id === _id);
+		const newContact = contacts[index];
+		return {
+			contacts: newContact,
+		};
+	}else{
+		return {
+			contacts: {},
+		};
+	}
+};
+
+
+export default (connect(
+	mapStateToProps,
+	{addSingleContact, updateContact}
+)(AddContacts));
+
